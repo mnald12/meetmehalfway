@@ -1,0 +1,53 @@
+<html>
+   <head>
+      <title>video chat</title>
+      <link rel="stylesheet" href="style.css" />
+   </head>
+   <body>
+      <div class="video-container">
+         <div class="locals">
+            <div class="local-video" id="myCam">
+               <video id="local" muted autoplay></video>
+            </div>
+            <div>
+               <br />
+               <p>Your code :</p>
+               <p class="code" id="code" title="click to copy"></p>
+            </div>
+         </div>
+         <div class="remote-video" id="remote-container">
+            <video id="remote" autoplay></video>
+            <div class="dialog" id="dialog">
+               <p>Calling....</p>
+               <div class="dialog-action">
+                  <button class="decline" id="decline">Declined</button>
+                  <button class="accept" id="accept">Accept</button>
+               </div>
+            </div>
+            <div class="dialog" id="dialog2">
+               <p>Calling....</p>
+               <div class="dialog-action">
+                  <button class="decline" id="decline2">Abort</button>
+               </div>
+            </div>
+            <div class="dialog" id="dialog3">
+               <br />
+               <p id="dialogMessage"></p>
+               <br />
+            </div>
+         </div>
+      </div>
+      <div class="action-container">
+         <input
+            id="codeInput"
+            type="text"
+            placeholder="enter your friend code here.."
+         />
+         <button id="codeBtn">Call now</button>
+         <button style="display: none" id="ender">End call</button>
+      </div>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="./script/dialogs.js" type="module"></script>
+      <script src="./script/main.js" type="module"></script>
+   </body>
+</html>
