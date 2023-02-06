@@ -70,35 +70,49 @@ const startConnection = () => {
 
    peerConnection.onicecandidate = (event) => {
       if (event.candidate && idToSend !== null) {
-         socket.emit('send-candidate', idToSend, event.candidate)
+         const candidate = {
+            type: 'candidate',
+            label: event.candidate.sdpMLineIndex,
+            id: event.candidate.sdpMid,
+            candidate: event.candidate.candidate,
+         }
+         socket.emit('send-candidate', idToSend, candidate)
       }
    }
 
-   peerConnection.ontrack = (event) => {
-      remoteVideo.srcObject = event.streams[0]
+   peerConnection.onaddstream = (event) => {
+      remoteVideo.srcObject = event.stream
    }
 
-   for (const track of localStream.getTracks()) {
-      peerConnection.addTrack(track, localStream)
-   }
+   peerConnection.addStream(localStream)
 }
 
-const calleer = async (id) => {
+const calleer = (id) => {
    startConnection()
    idToSend = id
-   const offer = await peerConnection.createOffer()
-   await peerConnection.setLocalDescription(offer)
-   socket.emit('send-offer', socket.id, id, offer)
+   let offerOptions = {
+      offerToReceiveAudio: 1,
+   }
+   peerConnection
+      .createOffer(offerOptions)
+      .then((offer) => {
+         peerConnection.setLocalDescription(offer)
+         socket.emit('send-offer', socket.id, id, offer)
+      })
+      .catch((e) => console.log(e))
 }
 
 const callee = async (id, description) => {
    startConnection()
    idToSend = id
-   await peerConnection.setRemoteDescription(description)
-   const answer = await peerConnection.createAnswer()
-   await peerConnection.setLocalDescription(answer)
-   socket.emit('send-answer', id, answer)
-   await peerConnection.addIceCandidate(otherCandidate, success, fail)
+   peerConnection.setRemoteDescription(new RTCSessionDescription(description))
+   peerConnection
+      .createAnswer()
+      .then((answer) => {
+         peerConnection.setLocalDescription(answer)
+         socket.emit('send-answer', id, answer)
+      })
+      .catch((e) => console.log(e))
 }
 
 socket.on('offer', (id, description) => {
@@ -107,24 +121,21 @@ socket.on('offer', (id, description) => {
    commingDescription = description
 })
 
-socket.on('answer', async (description) => {
-   await peerConnection.setRemoteDescription(description)
-   await peerConnection.addIceCandidate(otherCandidate, success, fail)
+socket.on('answer', (answer) => {
+   peerConnection.setRemoteDescription(new RTCSessionDescription(answer))
    hideDialog()
    hideAction()
 })
 
-socket.on('candidate', (candidate) => {
-   otherCandidate = candidate
+socket.on('candidate', (candidates) => {
+   if (peerConnection) {
+      const candidate = new RTCIceCandidate({
+         sdpMLineIndex: candidates.label,
+         candidate: candidates.candidate,
+      })
+      peerConnection.addIceCandidate(candidate)
+   }
 })
-
-const success = () => {
-   console.log('candidate came and successfuly added as our ice candidate')
-}
-
-const fail = () => {
-   console.log('candidate came but fail to add as our ice candidate')
-}
 
 const codeInput = document.getElementById('codeInput')
 const callBtn = document.getElementById('codeBtn')
@@ -171,7 +182,6 @@ socket.on('close', () => {
    peerConnection.close()
    callerID = null
    idToSend = null
-   commingDescription = null
    hideDialog()
    showAction()
    showDialog('call ended')
