@@ -45,7 +45,6 @@ const defaultConstraints = {
 }
 
 let peerConnection
-let otherCandidate
 
 let idToSend = null
 let callerID
@@ -102,9 +101,8 @@ const calleer = (id) => {
       .catch((e) => console.log(e))
 }
 
-const callee = async (id, description) => {
+const callee = async (id) => {
    idToSend = id
-   peerConnection.setRemoteDescription(new RTCSessionDescription(description))
    peerConnection
       .createAnswer()
       .then((answer) => {
@@ -117,7 +115,7 @@ const callee = async (id, description) => {
 socket.on('offer', (id, description) => {
    showCallingDialog()
    callerID = id
-   commingDescription = description
+   peerConnection.setRemoteDescription(new RTCSessionDescription(description))
 })
 
 socket.on('answer', (answer) => {
@@ -149,7 +147,7 @@ callBtn.addEventListener('click', () => {
 
 const accept = document.getElementById('accept')
 accept.addEventListener('click', () => {
-   callee(callerID, commingDescription)
+   callee(callerID)
    hideDialog()
    hideAction()
 })
