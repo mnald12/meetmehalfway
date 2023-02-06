@@ -23,18 +23,22 @@ socket.on('connect', () => {
 const configuration = {
    iceServers: [
       {
-         urls: ['stun:tmqphiltraining.freeddns.org'],
+         urls: 'stun:relay.metered.ca:80',
       },
       {
-         urls: ['turn:tmqphiltraining.freeddns.org'],
-         username: '1675528966.055',
-         credential: 'vwJNW8JIVIeoliaci4zyrghKpew=',
+         urls: 'turn:relay.metered.ca:80',
+         username: 'daa03d9d508852f8e784f910',
+         credential: 'NlLw12jY0Ps4w5Z6',
       },
       {
-         url: 'stun:stun.services.mozilla.com',
+         urls: 'turn:relay.metered.ca:443',
+         username: 'daa03d9d508852f8e784f910',
+         credential: 'NlLw12jY0Ps4w5Z6',
       },
       {
-         url: 'stun:stun.l.google.com:19302',
+         urls: 'turn:relay.metered.ca:443?transport=tcp',
+         username: 'daa03d9d508852f8e784f910',
+         credential: 'NlLw12jY0Ps4w5Z6',
       },
    ],
    sdpSemantics: 'unified-plan',
