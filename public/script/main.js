@@ -23,11 +23,22 @@ socket.on('connect', () => {
 const configuration = {
    iceServers: [
       {
-         urls: 'stun:stun.l.google.com:13902',
+         urls: ['stun:tmqphiltraining.freeddns.org'],
+      },
+      {
+         urls: ['turn:tmqphiltraining.freeddns.org'],
+         username: '1675528966.055',
+         credential: 'vwJNW8JIVIeoliaci4zyrghKpew=',
+      },
+      {
+         url: 'stun:stun.services.mozilla.com',
+      },
+      {
+         url: 'stun:stun.l.google.com:19302',
       },
    ],
+   sdpSemantics: 'unified-plan',
 }
-
 const defaultConstraints = {
    audio: true,
    video: true,
