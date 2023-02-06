@@ -103,7 +103,6 @@ const calleer = (id) => {
 }
 
 const callee = async (id, description) => {
-   startConnection()
    idToSend = id
    peerConnection.setRemoteDescription(new RTCSessionDescription(description))
    peerConnection
@@ -116,6 +115,7 @@ const callee = async (id, description) => {
 }
 
 socket.on('offer', (id, description) => {
+   startConnection()
    showCallingDialog()
    callerID = id
    commingDescription = description
