@@ -58,7 +58,6 @@ const initCam = () => {
       .then((stream) => {
          localStream = stream
          localVideo.srcObject = stream
-         startConnection()
       })
       .catch((error) => console.error(error))
 }
@@ -113,9 +112,10 @@ const callee = async (id) => {
 }
 
 socket.on('offer', (id, description) => {
-   showCallingDialog()
+   startConnection()
    callerID = id
    peerConnection.setRemoteDescription(new RTCSessionDescription(description))
+   showCallingDialog()
 })
 
 socket.on('answer', (answer) => {
@@ -140,6 +140,7 @@ const ender = document.getElementById('ender')
 
 callBtn.addEventListener('click', () => {
    if (codeInput.value !== '') {
+      startConnection()
       calleer(codeInput.value)
       showCallDialog()
    }
