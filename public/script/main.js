@@ -59,6 +59,7 @@ const initCam = () => {
       .then((stream) => {
          localStream = stream
          localVideo.srcObject = stream
+         startConnection()
       })
       .catch((error) => console.error(error))
 }
@@ -88,7 +89,6 @@ const startConnection = () => {
 }
 
 const calleer = (id) => {
-   startConnection()
    idToSend = id
    let offerOptions = {
       offerToReceiveAudio: 1,
@@ -115,7 +115,6 @@ const callee = async (id, description) => {
 }
 
 socket.on('offer', (id, description) => {
-   startConnection()
    showCallingDialog()
    callerID = id
    commingDescription = description
